@@ -20,6 +20,10 @@ for(const file of commandFiles) {
 	client.commands.set(command.name, command);
 }
 
+String.prototype.replaceAt = function(index, replacement) {
+	return this.substr(0, index) + replacement + this.substr(index + 1);
+};
+
 
 client.once('ready', () => {
 	console.log('MangaMirror activates!');
@@ -32,7 +36,28 @@ process.on('unhandledRejection', error => {
 client.on('message', message =>{
 	if(!message.content.startsWith(config.prefix) || message.author.bot) return;
 
-	const args = message.content.slice(config.prefix.length).split(/ +/);
+	const quoteIndices = [];
+	let currentIndex = -1;
+	let quotedMessage = message.content;
+	for(let i = quotedMessage.length - 1; i >= 0; i--) {
+		if (quotedMessage[i] == '"') {
+			quoteIndices.push(i);
+			currentIndex += 1;
+			if (!(currentIndex % 2 == 0)) {
+				for (let j = (i + 1); j < (quoteIndices[currentIndex - 1]); j++) {
+					if (quotedMessage[j] == ' ') {
+						quotedMessage = quotedMessage.replaceAt(j, '_');
+					}
+				}
+				quotedMessage = quotedMessage.replaceAt(quoteIndices[currentIndex - 1], '');
+				quotedMessage = quotedMessage.replaceAt(i, '');
+			}
+
+		}
+	}
+
+	const args = quotedMessage.slice(config.prefix.length).split(/ +/);
+
 	const commandName = args.shift().toLowerCase();
 
 	const command = client.commands.get(commandName)
