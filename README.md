@@ -5,7 +5,7 @@ A Discord bot for sharing manga recommendations and manga pages from the manga f
 
 ------------
 # Usage
-![Image](https://i.imgur.com/50Kggas.png)
+![Image](https://i.imgur.com/vZtmnYl.png)
 
 
 
