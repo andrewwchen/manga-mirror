@@ -33,35 +33,53 @@ If you would like to host the bot yourself, download the code in this repository
 
 ------------
 **Name:** search
+
 **Aliases:** look, lookup, find, query
+
 **Description:** returns a manga, chapter, or group's information on MangaDex based on its name
+
 **Usage:** `!search <manga/chapter/group> <manga name> [chapter #]`
+
 **Cooldown:** 5 second(s)
 
 ------------
 **Name:** id
+
 **Aliases:** ids, identify, searchid, lookid, lookupid, findid, queryid, idsearch, idlookup, idquery
+
 **Description:** returns a manga, chapter, or group's information on MangaDex based on its MangaDex ID
+
 **Usage:** `!id <manga/chapter/group> <MD ID #>`
+
 **Cooldown:** 5 second(s)
 
 ------------
 **Name:** read
+
 **Aliases:** open
+
 **Description:** displays a whole chapter or just a page of a manga based on its MangaDex ID and an optional page number
+
 **Usage:** `!read <chapter MD ID #> [page #]`
+
 **Cooldown:** 15 second(s)
 
 ------------
 **Name:** ping
+
 **Aliases:** bing
+
 **Description:** ping command
+
 **Cooldown:** 1 second(s)
 
 ------------
 **Name:** cred
+
 **Aliases:** credits, author
+
 **Description:** shows the author's information
+
 **Cooldown:** 1 second(s)
 
 ------------
