@@ -1,5 +1,5 @@
 # Manga-Mirror Discord Bot
-A Discord bot for sharing manga recommendations and manga pages from the manga fan-translation website https://mangadex.org/. Manga-Mirror is made using the Discord API and the unofficial Mangadex API by md-y: https://github.com/md-y/mangadex-full-api.
+A Discord bot for sharing manga recommendations and manga pages from the manga fan-translation website https://mangadex.org/. Manga-Mirror is made using the Discord API with DiscordJS and the unofficial Mangadex API by md-y: https://github.com/md-y/mangadex-full-api.
 
 ------------
 # Usage
