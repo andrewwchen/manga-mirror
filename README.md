@@ -22,9 +22,13 @@ If you would like to host the bot yourself, download the code in this repository
 
 ------------
 **Name:** help
+
 **Aliases:** commands
+
 **Description:** List all of my commands or info about a specific command.
+
 **Usage:** `!help [command name]`
+
 **Cooldown:** 5 second(s)
 
 ------------
