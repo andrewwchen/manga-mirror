@@ -16,11 +16,7 @@ module.exports = {
 		for (let i = 0; i < args.length; i++) {
 			args[i] = args[i].replace(/_/g, ' ');
 		}
-
-		if (!(message.channel.type === 'dm') && (!message.member.permissions.has('ATTATCH_FILES') && message.member.permissions.has('EMBED_LINKS'))) {
-			message.channel.send(`${message.member}, you don't have permission to attatch files and embed links.`);
-		}
-		else if (args.length === 0) {
+		if (args.length === 0) {
 			return;
 		}
 		else if (helpers.isNumeric(args[0])) {

@@ -11,11 +11,19 @@ module.exports = {
 		return message.channel.send(reply);
 	},
 	decode(text) {
-		let output = he.decode(text);
-		output = output.replace('[i]', '*').replace('[/i]', '*');
-		output = output.replace('[b]', '**').replace('[/b]', '**');
-		output = output.replace('[u]', '__').replace('[/u]', '__');
-		output = output.replace('[spoiler]', '||').replace('[/spoiler]', '||');
+		let output = he.decode(text).toString();
+		output = output.split('[i]').join('*');
+		output = output.split('[/i]').join('*');
+		output = output.split('[b]').join('**');
+		output = output.split('[/b]').join('**');
+		output = output.split('[u]').join('__');
+		output = output.split('[/u]').join('__');
+		output = output.split('[spoiler]').join('||');
+		output = output.split('[/spoiler]').join('||');
+		output = output.split('[url=').join('');
+		output = output.split('[/url]').join('');
+		output = output.split('[hr]').join('');
+		output = output.split('[*]').join('* ');
 		return output;
 	},
 	// https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number

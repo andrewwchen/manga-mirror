@@ -12,7 +12,7 @@ module.exports = {
 	groupEmbed(group, channel) {
 		let desc = '';
 		if (typeof group.description === 'string') {
-			desc = helpers.decode(group.description);
+			desc = helpers.decode(group.description).substr(0, 2048);
 		}
 		const url = `https://mangadex.org/group/${group.id}`;
 		const fields = [
@@ -25,7 +25,7 @@ module.exports = {
 
 		const embed = new Discord.MessageEmbed()
 			.setColor('#0099ff')
-			.setTitle(group.title)
+			.setTitle(group.title.substr(0, 256))
 			.setURL(url)
 			.setAuthor('MangaDex', 'https://www.saashub.com/images/app/service_logos/86/ced2d3e2ea0d/large.png', url)
 			.setDescription(desc)
@@ -47,7 +47,7 @@ module.exports = {
 			fields.push({ name: 'Group', value: chapterGroup.title + ` (${chapterGroup.id})`, inline: true });
 			const embed = new Discord.MessageEmbed()
 				.setColor('#0099ff')
-				.setTitle(`${mangaName}: Chapter ${chap.chapter}`)
+				.setTitle(`${mangaName}: Chapter ${chap.chapter}`.substr(0, 256))
 				.setURL(chap.url)
 				.setAuthor('MangaDex', 'https://www.saashub.com/images/app/service_logos/86/ced2d3e2ea0d/large.png', chap.url)
 				.addFields(fields)
@@ -64,46 +64,49 @@ module.exports = {
 	mangaEmbed(manga, channel) {
 		const chaps = manga.chapters;
 		let highestChapNum = 0;
-		for(const c of chaps) {
-			if(c.chapter > highestChapNum) {
-				highestChapNum = c.chapter;
+		if (!(typeof chaps === 'undefined')) {
+			for(const c of chaps) {
+				if(c.chapter > highestChapNum) {
+					highestChapNum = c.chapter;
+				}
 			}
 		}
-		const desc = helpers.decode(manga.description);
+
+		const desc = helpers.decode(manga.description).substr(0, 2048);
 		const fields = [];
 		switch (manga.genreNames.length) {
 		case 0:
 			break;
 		case 1:
-			fields.push({ name: 'Genre', value: manga.genreNames.join(', '), inline: false });
+			fields.push({ name: 'Genre', value: manga.genreNames.join(', ').substr(0, 1024), inline: false });
 			break;
 		default:
-			fields.push({ name: 'Genres', value: manga.genreNames.join(', '), inline: false });
+			fields.push({ name: 'Genres', value: manga.genreNames.join(', ').substr(0, 1024), inline: false });
 		}
 		switch (manga.authors.length) {
 		case 0:
 			break;
 		case 1:
-			fields.push({ name: 'Author', value: manga.authors.join(', '), inline: true });
+			fields.push({ name: 'Author', value: manga.authors.join(', ').substr(0, 1024), inline: true });
 			break;
 		default:
-			fields.push({ name: 'Authors', value: manga.authors.join(', '), inline: true });
+			fields.push({ name: 'Authors', value: manga.authors.join(', ').substr(0, 1024), inline: true });
 		}
 		switch (manga.artists.length) {
 		case 0:
 			break;
 		case 1:
-			fields.push({ name: 'Artist', value: manga.artists.join(', '), inline: true });
+			fields.push({ name: 'Artist', value: manga.artists.join(', ').substr(0, 1024), inline: true });
 			break;
 		default:
-			fields.push({ name: 'Artists', value: manga.artists.join(', '), inline: true });
+			fields.push({ name: 'Artists', value: manga.artists.join(', ').substr(0, 1024), inline: true });
 		}
 		fields.push({ name: 'ID', value: manga.id.toString(), inline: true });
 		fields.push({ name: 'Chapters', value: highestChapNum.toString(), inline: true });
 
 		const embed = new Discord.MessageEmbed()
 			.setColor('#0099ff')
-			.setTitle(manga.title)
+			.setTitle(manga.title.substr(0, 256))
 			.setURL(manga.url)
 			.setAuthor('MangaDex', 'https://www.saashub.com/images/app/service_logos/86/ced2d3e2ea0d/large.png', manga.url)
 			.setDescription(desc)
