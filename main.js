@@ -7,6 +7,8 @@ const fs = require('fs');
 
 const config = require('./config.json');
 
+const helpers = require('./helpers.js');
+
 const client = new Discord.Client();
 
 const cooldowns = new Discord.Collection();
@@ -66,13 +68,7 @@ client.on('message', message =>{
 	if (!command) return;
 
 	if (command.args && !args.length) {
-		let reply = `You didn't provide any arguments, ${message.author}!`;
-
-		if (command.usage) {
-			reply += `\nThe proper usage would be: \`${config.prefix}${command.name} ${command.usage}\``;
-		}
-
-		return message.channel.send(reply);
+		helpers.improperUsage(command, message, 'You did not provide any arguments');
 	}
 
 	if (!cooldowns.has(command.name)) {
