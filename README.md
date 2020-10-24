@@ -1,2 +1,58 @@
-# manga-mirror
-Discord bot for querying and receiving updates on follows from the manga fan-translation website mangadex.org. Made using the Discord API and the unofficial Mangadex API by md-y: https://github.com/md-y/mangadex-full-api
+# Manga-Mirror Discord Bot
+A Discord bot for sharing manga recommendations and manga pages from the manga fan-translation website https://mangadex.org/. Manga-Mirror is made using the Discord API and the unofficial Mangadex API by md-y: https://github.com/md-y/mangadex-full-api.
+
+------------
+# Usage
+![Image](https://i.imgur.com/50Kggas.png)
+
+
+
+------------
+# Installation
+
+------------
+# Full Command List
+
+#### help, search, id, read, ping, cred
+
+------------
+**Name:** help
+**Aliases:** commands
+**Description:** List all of my commands or info about a specific command.
+**Usage:** `!help [command name]`
+**Cooldown:** 5 second(s)
+
+------------
+**Name:** search
+**Aliases:** look, lookup, find, query
+**Description:** returns a manga, chapter, or group's information on MangaDex based on its name
+**Usage:** `!search <manga/chapter/group> <manga name> [chapter #]`
+**Cooldown:** 5 second(s)
+
+------------
+**Name:** id
+**Aliases:** ids, identify, searchid, lookid, lookupid, findid, queryid, idsearch, idlookup, idquery
+**Description:** returns a manga, chapter, or group's information on MangaDex based on its MangaDex ID
+**Usage:** `!id <manga/chapter/group> <MD ID #>`
+**Cooldown:** 5 second(s)
+
+------------
+**Name:** read
+**Aliases:** open
+**Description:** displays a whole chapter or just a page of a manga based on its MangaDex ID and an optional page number
+**Usage:** `!read <chapter MD ID #> [page #]`
+**Cooldown:** 15 second(s)
+
+------------
+**Name:** ping
+**Aliases:** bing
+**Description:** ping command
+**Cooldown:** 1 second(s)
+
+------------
+**Name:** cred
+**Aliases:** credits, author
+**Description:** shows the author's information
+**Cooldown:** 1 second(s)
+
+------------
