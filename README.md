@@ -5,6 +5,8 @@ A Discord bot for sharing manga recommendations and manga pages from the manga f
 
 ------------
 # Usage
+>*Click the image to open it in another window. You can in better that way!
+
 ![Image](https://i.imgur.com/vZtmnYl.png)
 
 
