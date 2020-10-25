@@ -1,11 +1,12 @@
 # Manga-Mirror Discord Bot
+![Image](https://i.imgur.com/WNxuGEo.png)
 A Discord bot for sharing manga recommendations and manga pages from the manga fan-translation website https://mangadex.org/. Manga-Mirror is made using the Discord API with DiscordJS and the unofficial Mangadex API by md-y: https://github.com/md-y/mangadex-full-api.
 
 *For the DALI Lab API challenge*
 
 ------------
 # Usage
->*Click the image to open it in another window. You can in better that way!
+>*Click the image to open it in another window. You can view it better that way!
 
 ![Image](https://i.imgur.com/vZtmnYl.png)
 
