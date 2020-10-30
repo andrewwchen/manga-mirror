@@ -18,7 +18,7 @@ Try the bot out and see examples at this discord server: https://discord.gg/CpdD
 
 If you would to add this bot onto your own server, use the following Discord bot invite link: https://discord.com/oauth2/authorize?&client_id=754003102817845299&scope=bot&permissions=11*6736.
 
-**Should the bot not currently be running, and if you would like a demo of the bot, DM me on Discord: Darude#8096.**
+**Should the bot not currently be running or if you would like a demo of the bot, DM me on Discord: Darude#8096.**
 
 If you would like to host the bot yourself, download the code in this repository and modify "config.json" with your own MangaDex and Discord bot credentials. You will have to create your own MangaDex account and your own Discord bot at the Discord developer portal: https://discord.com/developers/applications.
 
