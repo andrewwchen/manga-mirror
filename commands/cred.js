@@ -6,8 +6,7 @@ module.exports = {
 	usage: '',
 	cooldown: 1,
 
-	// eslint-disable-next-line no-unused-vars
-	execute(message, args) {
-		message.channel.send('"MangaMirror" made by Darude#8096');
+	execute(message, _args) {
+		message.channel.send('"MangaMirror" by Darude#8096');
 	},
 };

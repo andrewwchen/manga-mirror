@@ -1,5 +1,4 @@
 const config = require('./config.json');
-
 const he = require('he');
 
 module.exports = {

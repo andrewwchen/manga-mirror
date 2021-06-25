@@ -2,15 +2,10 @@
 // using "MangaDex Full API" by md-y at github.com/md-y/mangadex-full-api
 
 const Discord = require('discord.js');
-
 const fs = require('fs');
-
 const config = require('./config.json');
-
 const helpers = require('./helpers.js');
-
 const client = new Discord.Client();
-
 const cooldowns = new Discord.Collection();
 
 client.commands = new Discord.Collection();

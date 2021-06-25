@@ -1,6 +1,7 @@
 {
     "prefix": "!",
-    "token": "your token here",
-    "mduser": "mangadex username here",
-    "mdpass": "mangadex password here"
+    "token": "your Discord bot token",
+    "mduser": "your MangaDex username",
+    "mdpass": "your MangaDex password",
+    "cacheLocation": "path to your MD cache file"
 }

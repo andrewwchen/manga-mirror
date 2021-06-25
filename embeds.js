@@ -1,119 +1,143 @@
-/* eslint-disable no-shadow */
-
 const helpers = require('./helpers.js');
-
 const Discord = require('discord.js');
-
-const moment = require('moment');
-
 const api = require('mangadex-full-api');
 
 module.exports = {
+
+	// embed for a specific scanlation group
 	groupEmbed(group, channel) {
-		let desc = '';
-		if (typeof group.description === 'string') {
-			desc = helpers.decode(group.description).substr(0, 2048);
-		}
+		const title = group.name.substr(0, 256);
 		const url = `https://mangadex.org/group/${group.id}`;
 		const fields = [
-			{ name: 'Followers', value: group.followers.toString(), inline: true },
-			{ name: 'Uploads', value: group.uploads.toString(), inline: true },
-			{ name: 'Views', value: group.views.toString(), inline: true },
-			{ name: 'ID', value: group.id.toString(), inline: true },
-			{ name: 'Language', value: group.language, inline: true },
+			{ name: 'ID', value: group.id, inline: true },
 		];
+		if (group.createdAt != null) {
+			fields.push({ name: 'Created', value: group.createdAt, inline: true });
+		}
+		if (group.leader != null) {
+			fields.push({ name: 'Leader', value: group.leader.username.substr(0, 1024), inline: true });
+		}
+		if (group.members.length > 0) {
+			fields.push({ name: 'Members', value: group.members.map(m => m.username).join(', ').substr(0, 1024), inline: true });
+		}
 
 		const embed = new Discord.MessageEmbed()
 			.setColor('#0099ff')
-			.setTitle(group.title.substr(0, 256))
+			.setTitle(title)
 			.setURL(url)
 			.setAuthor('MangaDex', 'https://www.saashub.com/images/app/service_logos/86/ced2d3e2ea0d/large.png', url)
-			.setDescription(desc)
 			.addFields(fields)
 			.setTimestamp()
 			.setFooter('MangaMirror by Darude#8096', 'https://i.imgur.com/FXZSEhP.jpg');
 		channel.send(embed);
 	},
 
-	chapterEmbed(chap, mangaName, channel, files = []) {
+	// embed for a specific chapter
+	async chapterEmbed(chap, mangaName, channel, files = []) {
+
+		const title = `${mangaName}: Chapter ${chap.chapter}`.substr(0, 256);
+		const url = `https://mangadex.org/chapter/${chap.id}`;
+
+		// scanlation groups responsible for the chapter
+		const groupObjs = await api.resolveArray(chap.groups);
+		const groups = groupObjs.map(g => `${g.name} (${g.id})`).join(', ').substr(0, 1024);
+
 		const fields = [
-			{ name: 'ID', value: chap.id.toString(), inline: true },
-			{ name: 'Pages', value: chap.pages.length.toString(), inline: true },
-			{ name: 'Language', value: chap.language, inline: true },
-			{ name: 'Time', value: moment.unix(chap.timestamp).format('MM/DD/YYYY'), inline: true },
+			{ name: 'ID', value: chap.id, inline: true },
+			{ name: 'Pages', value: chap.pageNames.length, inline: true },
+			{ name: 'Language', value: chap.translatedLanguage, inline: true },
+			{ name: (groups.length == 1 ? 'Group' : 'Groups'), value: groups, inline: true },
+			{ name: 'Date', value: chap.createdAt, inline: true },
 		];
-		const chapterGroup = new api.Group();
-		chapterGroup.fill(chap.groups[0].id).then((chapterGroup) => {
-			fields.push({ name: 'Group', value: chapterGroup.title + ` (${chapterGroup.id})`, inline: true });
-			const embed = new Discord.MessageEmbed()
-				.setColor('#0099ff')
-				.setTitle(`${mangaName}: Chapter ${chap.chapter}`.substr(0, 256))
-				.setURL(chap.url)
-				.setAuthor('MangaDex', 'https://www.saashub.com/images/app/service_logos/86/ced2d3e2ea0d/large.png', chap.url)
-				.addFields(fields)
-				.setTimestamp()
-				.setFooter('MangaMirror by Darude#8096', 'https://i.imgur.com/FXZSEhP.jpg');
-			channel.send(embed).then(() => {
-				if (files.length > 0) {
-					helpers.sendFiles(channel, files);
-				}
-			});
+		const embed = new Discord.MessageEmbed()
+			.setColor('#0099ff')
+			.setTitle(title)
+			.setURL(url)
+			.setAuthor('MangaDex', 'https://www.saashub.com/images/app/service_logos/86/ced2d3e2ea0d/large.png', url)
+			.addFields(fields)
+			.setTimestamp()
+			.setFooter('MangaMirror by Darude#8096', 'https://i.imgur.com/FXZSEhP.jpg');
+		channel.send(embed).then(() => {
+			if (files.length > 0) {
+				helpers.sendFiles(channel, files);
+			}
+			else {
+				channel.send('to read this chapter, use:');
+				channel.send(`!read ${chap.id}`);
+			}
 		});
 	},
 
-	mangaEmbed(manga, channel) {
-		const chaps = manga.chapters;
-		let highestChapNum = 0;
-		if (!(typeof chaps === 'undefined')) {
-			for(const c of chaps) {
-				if(c.chapter > highestChapNum) {
-					highestChapNum = c.chapter;
-				}
-			}
-		}
+	// embed for a manga object
+	async mangaEmbed(manga, channel) {
 
-		const desc = helpers.decode(manga.description).substr(0, 2048);
+		const title = manga.title.substr(0, 256);
+
+		// url of the manga's page on MangaDex
+		const url = `https://mangadex.org/title/${manga.id}`;
+
+		// get and simplify the english description on MD
+		const desc = helpers.decode(manga.localizedDescription.en).substr(0, 2048);
+
+		// comma-separated list of the manga's genre tags
+		const tags = manga.tags.map(t => t.name).join(', ').substr(0, 1024);
+
+		// comma-separated list of the manga's authors
+		const authorObjs = await api.resolveArray(manga.authors);
+		const authors = authorObjs.map(a => a.name).join(', ').substr(0, 1024);
+
+		// comma-separated list of the manga's artists
+		const artistObjs = await api.resolveArray(manga.artists);
+		const artists = artistObjs.map(a => a.name).join(', ').substr(0, 1024);
+
+		// input embed content into multiple named fields
 		const fields = [];
-		switch (manga.genreNames.length) {
+		switch (manga.tags.length) {
 		case 0:
 			break;
-		case 1:
-			fields.push({ name: 'Genre', value: manga.genreNames.join(', ').substr(0, 1024), inline: false });
-			break;
 		default:
-			fields.push({ name: 'Genres', value: manga.genreNames.join(', ').substr(0, 1024), inline: false });
+			fields.push({ name: 'Tags', value: tags, inline: false });
 		}
 		switch (manga.authors.length) {
 		case 0:
 			break;
-		case 1:
-			fields.push({ name: 'Author', value: manga.authors.join(', ').substr(0, 1024), inline: true });
-			break;
 		default:
-			fields.push({ name: 'Authors', value: manga.authors.join(', ').substr(0, 1024), inline: true });
+			fields.push({ name: (manga.artists.length == 1 ? 'Author' : 'Authors'), value: authors, inline: true });
 		}
 		switch (manga.artists.length) {
 		case 0:
 			break;
-		case 1:
-			fields.push({ name: 'Artist', value: manga.artists.join(', ').substr(0, 1024), inline: true });
-			break;
 		default:
-			fields.push({ name: 'Artists', value: manga.artists.join(', ').substr(0, 1024), inline: true });
+			fields.push({ name: (manga.artists.length == 1 ? 'Artist' : 'Artists'), value: artists, inline: true });
 		}
-		fields.push({ name: 'ID', value: manga.id.toString(), inline: true });
-		fields.push({ name: 'Chapters', value: highestChapNum.toString(), inline: true });
+
+		fields.push({ name: 'Demographic', value: manga.publicationDemographic, inline: true });
+
+		// loop through all chapters of the manga to get the latest chapter number
+		// TODO: replace this workaround with manga.lastChapter once MD updates\
+		const chapterObjs = await manga.getFeed({ order: { chapter: 'desc' } }, false);
+		if (chapterObjs.length > 0) {
+			fields.push({ name: 'Latest Chapter', value: chapterObjs[0].chapter, inline: true });
+		}
+		fields.push({ name: 'ID', value: manga.id, inline: true });
+
+		// main cover art of the manga on MD
+		const coverObj = await manga.mainCover.resolve();
+		const coverUrl = coverObj.imageSource;
 
 		const embed = new Discord.MessageEmbed()
 			.setColor('#0099ff')
-			.setTitle(manga.title.substr(0, 256))
-			.setURL(manga.url)
+			.setTitle(title)
+			.setURL(url)
 			.setAuthor('MangaDex', 'https://www.saashub.com/images/app/service_logos/86/ced2d3e2ea0d/large.png', manga.url)
 			.setDescription(desc)
 			.addFields(fields)
-			.setImage(manga.getFullURL('cover'))
+			.setImage(coverUrl)
 			.setTimestamp()
 			.setFooter('MangaMirror by Darude#8096', 'https://i.imgur.com/FXZSEhP.jpg', 'https://github.com/chenmasterandrew/manga-mirror');
-		channel.send(embed);
+		channel.send(embed).then(() => {
+			channel.send('to check for a specific chapter of this manga, use:');
+			channel.send(`!search chapter ${title} <chapter #>`);
+		});
 	},
 };

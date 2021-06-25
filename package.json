@@ -1,7 +1,8 @@
 {
-  "name": "discordbot",
-  "version": "1.0.0",
-  "description": "",
+  "name": "mangamirror",
+  "version": "2.0.0",
+  "description": "A Discord bot for accessing MangaDex",
+  "repository": "https://github.com/chenmasterandrew/manga-mirror",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,10 +12,9 @@
   "dependencies": {
     "discord.js": "^12.3.1",
     "he": "^1.2.0",
-    "mangadex-full-api": "^3.10.0",
-    "moment": "^2.29.1"
+    "mangadex-full-api": "^5.2.0"
   },
   "devDependencies": {
-    "eslint": "^7.8.1"
+    "eslint": "^7.29.0"
   }
 }
