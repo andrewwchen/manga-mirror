@@ -20,7 +20,7 @@ module.exports = {
 		if (group.members.length > 0) {
 			fields.push({ name: 'Members', value: group.members.map(m => m.username).join(', ').substr(0, 1024), inline: true });
 		}
-		
+
 		const embed = new Discord.MessageEmbed()
 			.setColor('#0099ff')
 			.setTitle(title)
@@ -32,7 +32,7 @@ module.exports = {
 		channel.send(embed);
 	},
 
-	// embed for a specific chapter 
+	// embed for a specific chapter
 	async chapterEmbed(chap, mangaName, channel, files = []) {
 
 		const title = `${mangaName}: Chapter ${chap.chapter}`.substr(0, 256);
@@ -41,7 +41,7 @@ module.exports = {
 		// scanlation groups responsible for the chapter
 		const groupObjs = await api.resolveArray(chap.groups);
 		const groups = groupObjs.map(g => `${g.name} (${g.id})`).join(', ').substr(0, 1024);
-		
+
 		const fields = [
 			{ name: 'ID', value: chap.id, inline: true },
 			{ name: 'Pages', value: chap.pageNames.length, inline: true },
@@ -108,7 +108,7 @@ module.exports = {
 		}
 
 		fields.push({ name: 'Demographic', value: manga.publicationDemographic, inline: true });
-		
+
 		// loop through all chapters of the manga to get the latest chapter number
 		// TODO: replace this workaround with manga.lastChapter once MD updates\
 		const chapterObjs = await manga.getFeed({ order: { chapter: 'desc' } }, false);

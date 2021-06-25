@@ -20,7 +20,7 @@ module.exports = {
 
 		// checking for enough arguments
 		if (args.length < 1) {
-			helpers.improperUsage(module.exports, message, 'Not enough arguments');
+			return;
 		}
 
 		// getting type of object (manga, chapter, or group) to search for
@@ -48,12 +48,14 @@ module.exports = {
 								message.channel.send(`Found manga: **${manga.title}**, ${message.author}.`);
 								embeds.mangaEmbed(manga, message.channel);
 							}
-						} catch {
-							message.channel.send("Encountered an error while retrieving manga");
+						}
+						catch {
+							message.channel.send('Encountered an error while retrieving manga');
 						}
 					});
-				} catch {
-					message.channel.send("Encountered an error while logging into MangaDex");
+				}
+				catch {
+					message.channel.send('Encountered an error while logging into MangaDex');
 				}
 			}
 		}
@@ -85,7 +87,7 @@ module.exports = {
 								message.channel.send(`Unable to find manga of name **${mangaName}**, ${message.author}.`);
 							});
 							if (manga != null) {
-								const chaps = await manga.getFeed()
+								const chaps = await manga.getFeed();
 								const goodChaps = [];
 								for (const chap of chaps) {
 									if (chap.chapter == chapNumber) {
@@ -97,18 +99,20 @@ module.exports = {
 									embeds.chapterEmbed(chap, manga.title, message.channel);
 								}
 							}
-						} catch {
-							message.channel.send("Encountered an error while retrieving chapters.")
+						}
+						catch {
+							message.channel.send('Encountered an error while retrieving chapters.');
 						}
 					});
-				} catch {
-					message.channel.send("Encountered an error while logging into MangaDex");
+				}
+				catch {
+					message.channel.send('Encountered an error while logging into MangaDex');
 				}
 			}
 		}
 
 		// search for a scanlation group
-		else if(type === 'group') {
+		else if (type === 'group') {
 
 			// check if there is a manga name (remaining # args > 0)
 			if (args.length === 0) {
@@ -129,12 +133,14 @@ module.exports = {
 								message.channel.send(`Found group: **${group.name}**, ${message.author}.`);
 								embeds.groupEmbed(group, message.channel);
 							}
-						} catch {
-							message.channel.send("Encountered an error while retrieving group");
+						}
+						catch {
+							message.channel.send('Encountered an error while retrieving group');
 						}
 					});
-				} catch {
-					message.channel.send("Encountered an error while logging into MangaDex");
+				}
+				catch {
+					message.channel.send('Encountered an error while logging into MangaDex');
 				}
 			}
 		}
