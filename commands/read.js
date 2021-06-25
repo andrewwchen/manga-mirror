@@ -1,8 +1,5 @@
-/* eslint-disable no-shadow */
 const api = require('mangadex-full-api');
-
 const helpers = require('../helpers.js');
-
 const embeds = require('../embeds.js');
 
 module.exports = {

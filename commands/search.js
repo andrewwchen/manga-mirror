@@ -1,10 +1,6 @@
-/* eslint-disable no-shadow */
 const api = require('mangadex-full-api');
-
 const config = require('../config.json');
-
 const helpers = require('../helpers.js');
-
 const embeds = require('../embeds.js');
 
 module.exports = {
@@ -14,82 +10,139 @@ module.exports = {
 	args: true,
 	usage: '<manga/chapter/group> <manga name> [chapter #]',
 	cooldown: 5,
+
 	execute(message, args) {
+
+		// regex expression for replacing all '_' with ' '
 		for (let i = 0; i < args.length; i++) {
 			args[i] = args[i].replace(/_/g, ' ');
 		}
-		/*
-		if (!(message.channel.type === 'dm') && (!message.member.permissions.has('ATTATCH_FILES') && message.member.permissions.has('EMBED_LINKS'))) {
-			message.channel.send(`${message.member}, you don't have permission to attatch files and embed links.`);
-		}
-		*/
-		if (args.length === 0) {
-			return;
-		}
-		api.agent.login(config.mduser, config.mdpass, false).then(() => {
-			const type = args.shift().toLowerCase();
-			if(type === 'manga') {
-				if (args.length === 0) {
-					helpers.improperUsage(module.exports, message, 'You did not enter a manga name');
-				}
-				else {
-					message.channel.send('Searching...');
-					const manga = new api.Manga();
-					const mangaName = args.join(' ');
-					manga.fillByQuery(mangaName).then((manga) => {
-						message.channel.send(`Found manga: **${manga.title}**, ${message.author}.`);
-						embeds.mangaEmbed(manga, message.channel);
-					});
-				}
-			}
-			else if(type === 'chapter' || type === 'chap') {
-				const chapNumber = args.pop();
-				if (helpers.isNumeric(chapNumber)) {
-					if (args.length === 0) {
-						helpers.improperUsage(module.exports, message, 'You did not enter a manga name');
-					}
-					message.channel.send('Searching...');
-					const mangaName = args.join(' ');
-					const manga = new api.Manga();
-					manga.fillByQuery(mangaName).then((manga) => {
-						const chap = new api.Chapter();
-						const chaps = manga.chapters;
-						const goodChaps = [];
-						for(const c of chaps) {
-							if(c.chapter === parseFloat(chapNumber)) {
-								goodChaps.push(c);
-							}
-						}
-						message.channel.send(`Found the following **${goodChaps.length}** versions of **${manga.title}**: chapter **${chapNumber}**, ${message.author}.`);
-						for(const gc of goodChaps) {
-							chap.fill(gc.id).then((chap) => {
-								embeds.chapterEmbed(chap, manga.title, message.channel);
-							});
-						}
 
-					});
-				}
-				else {
-					helpers.improperUsage(module.exports, message, 'You did not enter a chapter number');
-				}
+		// checking for enough arguments
+		if (args.length < 1) {
+			helpers.improperUsage(module.exports, message, 'Not enough arguments');
+		}
+
+		// getting type of object (manga, chapter, or group) to search for
+		const type = args.shift().toLowerCase();
+
+		// search for a manga
+		if(type === 'manga') {
+
+			// check if there is a manga name (remaining # args > 0)
+			if (args.length === 0) {
+				helpers.improperUsage(module.exports, message, 'You did not enter a manga name');
 			}
-			else if(type === 'group') {
-				if (args.length === 0) {
-					helpers.improperUsage(module.exports, message, 'You did not enter a group name');
-				}
-				else {
-					message.channel.send('Searching...');
-					const groupName = args.join(' ');
-					const group = new api.Group();
-					group.fillByQuery(groupName).then((group) => {
-						message.channel.send(`Found group: **${group.title}**, ${message.author}.`);
-						embeds.groupEmbed(group, message.channel);
-					});
-				}
-			}
+
+			// do the search
 			else {
-				helpers.improperUsage(module.exports, message, `**${type}** is not a valid argument for the **search** command`);
+				try {
+					api.login(config.mdUser, config.mdPass, config.cacheLocation).then(async () => {
+						try {
+							message.channel.send('Searching...');
+							const mangaName = args.join(' ');
+							const manga = await api.Manga.getByQuery(mangaName).catch(() => {
+								message.channel.send(`Unable to find manga of name **${mangaName}**, ${message.author}.`);
+							});
+							if (manga != null) {
+								message.channel.send(`Found manga: **${manga.title}**, ${message.author}.`);
+								embeds.mangaEmbed(manga, message.channel);
+							}
+						} catch {
+							message.channel.send("Encountered an error while retrieving manga");
+						}
+					});
+				} catch {
+					message.channel.send("Encountered an error while logging into MangaDex");
+				}
 			}
-		});
+		}
+
+		// search for a chapter of a manga
+		else if (type === 'chapter' || type === 'chap') {
+
+			// get the chapter number (last remaining arg)
+			const chapNumber = parseFloat(args.pop());
+
+			// check if the chapter number was a valid number
+			if (isNaN(chapNumber)) {
+				helpers.improperUsage(module.exports, message, 'You did not enter a valid chapter number');
+			}
+
+			// check if the user specified a manga (remaning args > 0)
+			else if (args.length === 0) {
+				helpers.improperUsage(module.exports, message, 'You did not enter a manga name');
+			}
+
+			// do the search
+			else {
+				try {
+					api.login(config.mdUser, config.mdPass, config.cacheLocation).then(async () => {
+						try {
+							message.channel.send('Searching...');
+							const mangaName = args.join(' ');
+							const manga = await api.Manga.getByQuery(mangaName).catch(() => {
+								message.channel.send(`Unable to find manga of name **${mangaName}**, ${message.author}.`);
+							});
+							if (manga != null) {
+								const chaps = await manga.getFeed()
+								const goodChaps = [];
+								for (const chap of chaps) {
+									if (chap.chapter == chapNumber) {
+										goodChaps.push(chap);
+									}
+								}
+								message.channel.send(`Found the following **${goodChaps.length}** versions of **${manga.title}**: chapter **${chapNumber}**, ${message.author}.`);
+								for (const chap of goodChaps) {
+									embeds.chapterEmbed(chap, manga.title, message.channel);
+								}
+							}
+						} catch {
+							message.channel.send("Encountered an error while retrieving chapters.")
+						}
+					});
+				} catch {
+					message.channel.send("Encountered an error while logging into MangaDex");
+				}
+			}
+		}
+
+		// search for a scanlation group
+		else if(type === 'group') {
+
+			// check if there is a manga name (remaining # args > 0)
+			if (args.length === 0) {
+				helpers.improperUsage(module.exports, message, 'You did not enter a group name');
+			}
+
+			// do the search
+			else {
+				try {
+					api.login(config.mdUser, config.mdPass, config.cacheLocation).then(async () => {
+						try {
+							message.channel.send('Searching...');
+							const groupName = args.join(' ');
+							const group = await api.Group.getByQuery(groupName).catch(() => {
+								message.channel.send(`Unable to find group of name **${groupName}**, ${message.author}.`);
+							});
+							if (group != null) {
+								message.channel.send(`Found group: **${group.name}**, ${message.author}.`);
+								embeds.groupEmbed(group, message.channel);
+							}
+						} catch {
+							message.channel.send("Encountered an error while retrieving group");
+						}
+					});
+				} catch {
+					message.channel.send("Encountered an error while logging into MangaDex");
+				}
+			}
+		}
+
+
+		// invalid type
+		else {
+			helpers.improperUsage(module.exports, message, `**${type}** is not a valid argument for the **search** command`);
+		}
 	},
 };

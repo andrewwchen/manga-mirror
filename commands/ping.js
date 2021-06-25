@@ -6,8 +6,7 @@ module.exports = {
 	usage: '',
 	cooldown: 1,
 
-	// eslint-disable-next-line no-unused-vars
-	execute(message, args) {
+	execute(message, _args) {
 		message.channel.send('pong!');
 	},
 };
