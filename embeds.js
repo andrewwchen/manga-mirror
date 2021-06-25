@@ -61,6 +61,10 @@ module.exports = {
 			if (files.length > 0) {
 				helpers.sendFiles(channel, files);
 			}
+			else {
+				channel.send('to read this chapter, use:');
+				channel.send(`!read ${chap.id}`);
+			}
 		});
 	},
 
@@ -131,6 +135,9 @@ module.exports = {
 			.setImage(coverUrl)
 			.setTimestamp()
 			.setFooter('MangaMirror by Darude#8096', 'https://i.imgur.com/FXZSEhP.jpg', 'https://github.com/chenmasterandrew/manga-mirror');
-		channel.send(embed);
+		channel.send(embed).then(() => {
+			channel.send('to check for a specific chapter of this manga, use:');
+			channel.send(`!search chapter ${title} <chapter #>`);
+		});
 	},
 };

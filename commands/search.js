@@ -96,7 +96,7 @@ module.exports = {
 								}
 								message.channel.send(`Found the following **${goodChaps.length}** versions of **${manga.title}**: chapter **${chapNumber}**, ${message.author}.`);
 								for (const chap of goodChaps) {
-									embeds.chapterEmbed(chap, manga.title, message.channel);
+									await embeds.chapterEmbed(chap, manga.title, message.channel);
 								}
 							}
 						}
